@@ -10,32 +10,13 @@
 #include "driver/gpio.h"
 #include "lvgl.h"
 #include "TFT_eSPI.h"
-#include "amethyst/general.h"
-#include "amethyst/screen.h"
+#include "amethyst/general.hpp"
+#include "amethyst/screen.hpp"
 
 extern "C" void app_main(void) {
-    am_create_display(480, 320);
-    am_create_label({.text = "Hi there, this is from AMETHYST v0.0!"});
+    lv_init();
 
-    while (1) { am_display_handler(); }
-
-    //lv_init();
-
-  /* Initialize TFT_eSPI display using LVGL's driver */
-  /*lv_display_t * disp = lv_tft_espi_create(
-    320, 
-    480, 
-    buf, 
-    sizeof(buf)
-  );*/
-
-  /* Set rotation if needed */
-  //lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_270);
-
-  /* Create a simple label */
-  /*lv_obj_t * label = lv_label_create(lv_scr_act());
-  lv_label_set_text(label, "Hello LVGL V9!");
-  lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-
-  while (true) { vTaskDelay(5 / portTICK_PERIOD_MS); lv_timer_handler(); }*/
+    am_create_display(480, 320, lv_color_hex(0xff0000));
+    am_create_label(lv_screen_active(), "Hello!", LV_ALIGN_CENTER, 0, 0);
+    while (true) { am_display_handler(); }
 }

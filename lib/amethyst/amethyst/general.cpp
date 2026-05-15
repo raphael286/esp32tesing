@@ -1,4 +1,4 @@
-#include "general.h"
+#include "general.hpp"
 
 void am_gpio_high(gpio_num_t pin) {
     gpio_set_direction(pin, GPIO_MODE_OUTPUT);
@@ -12,6 +12,9 @@ void am_gpio_bidirectional(gpio_num_t pin) {
     gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT_OD);
 }
 
-void am_wait(int ms) {
+void am_quick_wait(int ms) {
+    ets_delay_us(ms);
+}
+void am_long_wait(int ms) {
     vTaskDelay(ms / portTICK_PERIOD_MS);
 }
