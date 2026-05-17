@@ -11,8 +11,10 @@
 void am_gpio_high(gpio_num_t pin);
 void am_gpio_low(gpio_num_t pin);
 void am_gpio_bidirectional(gpio_num_t pin);
+void am_gpio_input(gpio_num_t pin);
+bool am_gpio_check(gpio_num_t pin);
 
-void am_quick_wait(int ms);
+void am_quick_wait(int us);
 void am_long_wait(int ms);
 
 #define am_println(text) { printf(text); printf("\n"); }

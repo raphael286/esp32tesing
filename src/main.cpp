@@ -14,11 +14,18 @@
 #include "amethyst/am_tft_espi.hpp"
 #include "amethyst/storage.hpp"
 
+#define RPIN GPIO_NUM_34
+#define UPIN GPIO_NUM_35
+#define LPIN GPIO_NUM_16
+
+void tft_init(TFT_eSPI tft);
+void input_init(void);
+void touch_init(TFT_eSPI tft);
+
 extern "C" void app_main(void) {
     TFT_eSPI tft = TFT_eSPI();
-    tft.init();
-    tft.setRotation(3);
-    tft.fillScreen(TFT_BLACK); 
+    tft_init(tft);
+    input_init();
 
     tft.setTextSize(3);
     tft.setTextDatum(TC_DATUM);
@@ -28,23 +35,33 @@ extern "C" void app_main(void) {
     tft.setTextSize(2);
     tft.setCursor(0, 0);
     tft.println("\n\nTFT_eSPI initialized.");
+
+
+}
+
+void tft_init(TFT_eSPI tft) {
+    tft.init();
+    tft.setRotation(3);
+    tft.fillScreen(TFT_BLACK); 
+}
+
+void touch_init(TFT_eSPI tft) {
     tft.println("Setting up touch control now...");
 
-    nvs_handle_t handle = am_nvs_handle("amsys", NVS_READWRITE, true);
+    nvs_handle_t handle; 
+    am_nvs_handle("amsys", &handle, NVS_READWRITE, true);
+
     uint16_t calibrationData[5];
-    /*try
+    if (am_nvs_read("touchcal0", handle, (uint64_t*)calibrationData[0])) {
+        am_nvs_read("touchcal1", handle, (uint64_t*)calibrationData[1]);
+        am_nvs_read("touchcal2", handle, (uint64_t*)calibrationData[2]);
+        am_nvs_read("touchcal3", handle, (uint64_t*)calibrationData[3]);
+        am_nvs_read("touchcal4", handle, (uint64_t*)calibrationData[4]);
+    } else
     {
-        am_nvs_read("touchcal0", handle);
-        calibrationData[0] = (uint16_t)am_nvs_read("touchcal0", handle);
-        calibrationData[1] = (uint16_t)am_nvs_read("touchcal1", handle);
-        calibrationData[2] = (uint16_t)am_nvs_read("touchcal2", handle);
-        calibrationData[3] = (uint16_t)am_nvs_read("touchcal3", handle);
-        calibrationData[4] = (uint16_t)am_nvs_read("touchcal4", handle);
-    }
-    catch(const std::exception& e)
-    {*/
         tft.printf("Please be ready to calibrate your screen in 5 seconds.");
         am_long_wait(5000);
+        tft.printf("Tap the red dots on the corners of the screen.");
 
         tft.calibrateTouch(calibrationData, TFT_WHITE, TFT_RED, 15);
         am_nvs_write("touchcal0", (uint64_t)calibrationData[0], handle);
@@ -52,23 +69,6 @@ extern "C" void app_main(void) {
         am_nvs_write("touchcal2", (uint64_t)calibrationData[2], handle);
         am_nvs_write("touchcal3", (uint64_t)calibrationData[3], handle);
         am_nvs_write("touchcal4", (uint64_t)calibrationData[4], handle);
-    //}
+    }
     tft.setTouch(calibrationData);
-    tft.fillScreen(TFT_BLUE);
-    
-    /*while (1) {
-        uint16_t x, y;
-        static uint16_t color;
-
-        if (tft.getTouch(&x, &y)) {
-
-            tft.setCursor(5, 5, 2);
-            tft.printf("x: %i     ", x);
-            tft.setCursor(5, 20, 2);
-            tft.printf("y: %i    ", y);
-
-            tft.drawPixel(x, y, color);
-            color += 155;
-        }
-    }*/
 }
