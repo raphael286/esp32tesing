@@ -13,10 +13,14 @@
 #include "amethyst/general.hpp"
 #include "amethyst/am_tft_espi.hpp"
 #include "amethyst/storage.hpp"
+#include "amethyst/bluetooth.hpp"
 
 #define RPIN GPIO_NUM_34
 #define UPIN GPIO_NUM_35
 #define LPIN GPIO_NUM_16
+
+static char name[] = "am_mc";
+static char url[] = "jewels86.me";
 
 void tft_init(TFT_eSPI tft);
 void input_init(void);
@@ -25,7 +29,6 @@ void touch_init(TFT_eSPI tft);
 extern "C" void app_main(void) {
     TFT_eSPI tft = TFT_eSPI();
     tft_init(tft);
-    input_init();
 
     tft.setTextSize(3);
     tft.setTextDatum(TC_DATUM);
@@ -35,8 +38,12 @@ extern "C" void app_main(void) {
     tft.setTextSize(2);
     tft.setCursor(0, 0);
     tft.println("\n\nTFT_eSPI initialized.");
+    if (!am_ble_init()) tft.fillScreen(TFT_RED);
+    tft.println("BLE initialized.");
+    tft.println("\nAdvertising under BLE name 'am_mc'...");
+    if (!am_ble_advertise(name, url, sizeof(name), sizeof(url))) tft.fillScreen(TFT_RED);
 
-
+    am_long_wait(10000);
 }
 
 void tft_init(TFT_eSPI tft) {
