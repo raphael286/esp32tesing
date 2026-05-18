@@ -1,13 +1,5 @@
 #include "../bluetooth.hpp"
 
-bool am_ble_checkret(esp_err_t err, const char* msg) {
-    if (err != ESP_OK) {
-        am_log("am_ble", msg);
-        return true;
-    }
-    return false;
-}
-
 bool am_ble_init() {
     if (!am_nvs_init()) return false;
 

@@ -5,6 +5,7 @@ static uint8_t adv_end[] = { 0x02, ESP_BLE_AD_TYPE_TX_PWR, 0x09, 0x03, ESP_BLE_A
     0x02, ESP_BLE_AD_TYPE_LE_ROLE, 0x00 };
 static uint8_t scan_rsp_raw_start[] = { 0x08, ESP_BLE_AD_TYPE_LE_DEV_ADDR };
 static uint8_t scan_rsp_raw_mid[] = { 0x11, ESP_BLE_AD_TYPE_URI, 0x17, '/', '/' };
+static const char* tag = "am_ble";
 static bool config_done = false;
 
 void cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param);
@@ -32,7 +33,7 @@ bool am_ble_advertise(const char* name, const char* url, int name_size, int url_
 
     esp_bd_addr_t local_addr;
     uint8_t local_addr_type;
-    if (am_ble_checkret(esp_ble_gap_get_local_used_addr(local_addr, &local_addr_type), "failed to get local used address")) return false;
+    if (am_checkret(tag, esp_ble_gap_get_local_used_addr(local_addr, &local_addr_type), "failed to get local used address")) return false;
 
     uint8_t scan_rsp_raw_data[sizeof(scan_rsp_raw_start) + sizeof(local_addr) + sizeof(scan_rsp_raw_mid) + sizeof(url)]; int place = 0;
     memcpy(scan_rsp_raw_data, scan_rsp_raw_start, sizeof(scan_rsp_raw_start)); place += sizeof(scan_rsp_raw_start);
