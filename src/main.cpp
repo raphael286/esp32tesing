@@ -21,14 +21,12 @@
 
 static char name[] = "am_mc";
 static char url[] = "jewels86.me";
+TFT_eSPI tft = TFT_eSPI();
 
-void tft_init(TFT_eSPI tft);
-void input_init(void);
-void touch_init(TFT_eSPI tft);
+void tft_init(void);
 
 extern "C" void app_main(void) {
-    TFT_eSPI tft = TFT_eSPI();
-    tft_init(tft);
+    tft_init();
 
     tft.setTextSize(3);
     tft.setTextDatum(TC_DATUM);
@@ -38,6 +36,7 @@ extern "C" void app_main(void) {
     tft.setTextSize(2);
     tft.setCursor(0, 0);
     tft.println("\n\nTFT_eSPI initialized.");
+    
     if (!am_ble_init()) tft.fillScreen(TFT_RED);
     tft.println("BLE initialized.");
     tft.println("\nAdvertising under BLE name 'am_mc'...");
@@ -46,36 +45,8 @@ extern "C" void app_main(void) {
     am_long_wait(10000);
 }
 
-void tft_init(TFT_eSPI tft) {
+void tft_init() {
     tft.init();
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK); 
-}
-
-void touch_init(TFT_eSPI tft) {
-    tft.println("Setting up touch control now...");
-
-    nvs_handle_t handle; 
-    am_nvs_handle("amsys", &handle, NVS_READWRITE, true);
-
-    uint16_t calibrationData[5];
-    if (am_nvs_read16("touchcal0", handle, &calibrationData[0])) {
-        am_nvs_read16("touchcal1", handle, &calibrationData[1]);
-        am_nvs_read16("touchcal2", handle, &calibrationData[2]);
-        am_nvs_read16("touchcal3", handle, &calibrationData[3]);
-        am_nvs_read16("touchcal4", handle, &calibrationData[4]);
-    } else
-    {
-        tft.printf("Please be ready to calibrate your screen in 5 seconds.");
-        am_long_wait(5000);
-        tft.printf("Tap the red dots on the corners of the screen.");
-
-        tft.calibrateTouch(calibrationData, TFT_WHITE, TFT_RED, 15);
-        am_nvs_write16("touchcal0", calibrationData[0], handle);
-        am_nvs_write16("touchcal1", calibrationData[1], handle);
-        am_nvs_write16("touchcal2", calibrationData[2], handle);
-        am_nvs_write16("touchcal3", calibrationData[3], handle);
-        am_nvs_write16("touchcal4", calibrationData[4], handle);
-    }
-    tft.setTouch(calibrationData);
 }

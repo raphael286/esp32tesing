@@ -20,15 +20,15 @@ static esp_ble_adv_params_t adv_params = {
 };
 
 bool am_ble_advertise(const char* name, const char* url, int name_size, int url_size) {
-    if (am_ble_checkret(esp_ble_gap_register_callback(cb), "failed to register callback")) return false;
-    if (am_ble_checkret(esp_ble_gap_set_device_name(name), "failed to set device name")) return false;
+    if (am_checkret(tag, esp_ble_gap_register_callback(cb), "failed to register callback")) return false;
+    if (am_checkret(tag, esp_ble_gap_set_device_name(name), "failed to set device name")) return false;
 
     uint8_t adv_raw_data[sizeof(name) + sizeof(adv_start) + sizeof(adv_end)];
     memcpy(adv_raw_data, adv_start, sizeof(adv_start));
     memcpy(adv_raw_data + sizeof(adv_start), (uint8_t*)name, name_size);
     memcpy(adv_raw_data + sizeof(adv_start) + name_size, adv_end, sizeof(adv_end));
 
-    if (am_ble_checkret(esp_ble_gap_config_adv_data_raw(adv_raw_data, sizeof(adv_raw_data)), "failed to configure advertisement data")) return false;
+    if (am_checkret(tag, esp_ble_gap_config_adv_data_raw(adv_raw_data, sizeof(adv_raw_data)), "failed to configure advertisement data")) return false;
     config_done = true;
 
     esp_bd_addr_t local_addr;
@@ -40,7 +40,7 @@ bool am_ble_advertise(const char* name, const char* url, int name_size, int url_
     memcpy(scan_rsp_raw_data + place, local_addr, sizeof(local_addr)); place += sizeof(local_addr);
     memcpy(scan_rsp_raw_data + place, scan_rsp_raw_mid, sizeof(scan_rsp_raw_mid)); place += sizeof(scan_rsp_raw_mid);
     memcpy(scan_rsp_raw_data + place, url, url_size);
-    if (am_ble_checkret(esp_ble_gap_config_scan_rsp_data_raw(scan_rsp_raw_data, sizeof(scan_rsp_raw_data)), "failed to configure scan rsp data")) return false;
+    if (am_checkret(tag, esp_ble_gap_config_scan_rsp_data_raw(scan_rsp_raw_data, sizeof(scan_rsp_raw_data)), "failed to configure scan rsp data")) return false;
 
     am_log("am_ble", "Successfully exited am_ble_advertise!");
 
