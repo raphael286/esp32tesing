@@ -52,11 +52,11 @@ void touch_init(TFT_eSPI tft) {
     am_nvs_handle("amsys", &handle, NVS_READWRITE, true);
 
     uint16_t calibrationData[5];
-    if (am_nvs_read("touchcal0", handle, (uint64_t*)calibrationData[0])) {
-        am_nvs_read("touchcal1", handle, (uint64_t*)calibrationData[1]);
-        am_nvs_read("touchcal2", handle, (uint64_t*)calibrationData[2]);
-        am_nvs_read("touchcal3", handle, (uint64_t*)calibrationData[3]);
-        am_nvs_read("touchcal4", handle, (uint64_t*)calibrationData[4]);
+    if (am_nvs_read16("touchcal0", handle, &calibrationData[0])) {
+        am_nvs_read16("touchcal1", handle, &calibrationData[1]);
+        am_nvs_read16("touchcal2", handle, &calibrationData[2]);
+        am_nvs_read16("touchcal3", handle, &calibrationData[3]);
+        am_nvs_read16("touchcal4", handle, &calibrationData[4]);
     } else
     {
         tft.printf("Please be ready to calibrate your screen in 5 seconds.");
@@ -64,11 +64,11 @@ void touch_init(TFT_eSPI tft) {
         tft.printf("Tap the red dots on the corners of the screen.");
 
         tft.calibrateTouch(calibrationData, TFT_WHITE, TFT_RED, 15);
-        am_nvs_write("touchcal0", (uint64_t)calibrationData[0], handle);
-        am_nvs_write("touchcal1", (uint64_t)calibrationData[1], handle);
-        am_nvs_write("touchcal2", (uint64_t)calibrationData[2], handle);
-        am_nvs_write("touchcal3", (uint64_t)calibrationData[3], handle);
-        am_nvs_write("touchcal4", (uint64_t)calibrationData[4], handle);
+        am_nvs_write16("touchcal0", calibrationData[0], handle);
+        am_nvs_write16("touchcal1", calibrationData[1], handle);
+        am_nvs_write16("touchcal2", calibrationData[2], handle);
+        am_nvs_write16("touchcal3", calibrationData[3], handle);
+        am_nvs_write16("touchcal4", calibrationData[4], handle);
     }
     tft.setTouch(calibrationData);
 }
