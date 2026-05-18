@@ -9,6 +9,7 @@
 #include "stdexcept"
 
 void am_log(const char* tag, const char* content);
+bool am_checkret(const char* tag, esp_err_t err, const char* msg)
 
 void am_quick_wait(int us);
 void am_long_wait(int ms);

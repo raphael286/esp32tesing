@@ -5,6 +5,7 @@ static uint8_t adv_end[] = { 0x02, ESP_BLE_AD_TYPE_TX_PWR, 0x09, 0x03, ESP_BLE_A
     0x02, ESP_BLE_AD_TYPE_LE_ROLE, 0x00 };
 static uint8_t scan_rsp_raw_start[] = { 0x08, ESP_BLE_AD_TYPE_LE_DEV_ADDR };
 static uint8_t scan_rsp_raw_mid[] = { 0x11, ESP_BLE_AD_TYPE_URI, 0x17, '/', '/' };
+static const char* tag = "am_ble";
 
 void cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param);
 
@@ -17,38 +18,30 @@ static esp_ble_adv_params_t adv_params = {
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
 
-bool am_ble_checkret(esp_err_t err, const char* msg) {
-    if (err != ESP_OK) {
-        am_log("am_ble", msg);
-        return true;
-    }
-    return false;
-}
-
 bool am_ble_advertise(const char* name, const char* uri) {
 
 
-    if (am_ble_checkret(esp_ble_gap_set_device_name(name), "failed to set device name")) return false;
+    if (am_checkret(tag, esp_ble_gap_set_device_name(name), "failed to set device name")) return false;
 
     uint8_t adv_raw_data[sizeof(name) + sizeof(adv_start) + sizeof(adv_end)];
     memcpy(adv_raw_data, adv_start, sizeof(adv_start));
     memcpy(adv_raw_data + sizeof(adv_start), (uint8_t*)name, sizeof(name));
     memcpy(adv_raw_data + sizeof(adv_start) + sizeof(name), adv_end, sizeof(adv_end));
 
-    if (am_ble_checkret(esp_ble_gap_config_adv_data_raw(adv_raw_data, sizeof(adv_raw_data)), "failed to configure advertisement data")) return false;
+    if (am_checkret(tag, esp_ble_gap_config_adv_data_raw(adv_raw_data, sizeof(adv_raw_data)), "failed to configure advertisement data")) return false;
 
     esp_bd_addr_t local_addr;
     uint8_t local_addr_type;
-    if (am_ble_checkret(esp_ble_gap_get_local_used_addr(local_addr, &local_addr_type), "failed to get local used address")) return false;
+    if (am_checkret(tag, esp_ble_gap_get_local_used_addr(local_addr, &local_addr_type), "failed to get local used address")) return false;
 
     uint8_t scan_rsp_raw_data[sizeof(scan_rsp_raw_start) + sizeof(local_addr) + sizeof(scan_rsp_raw_mid) + sizeof(uri)]; int place = 0;
     memcpy(scan_rsp_raw_data, scan_rsp_raw_start, sizeof(scan_rsp_raw_start)); place += sizeof(scan_rsp_raw_start);
     memcpy(scan_rsp_raw_data + place, local_addr, sizeof(local_addr)); place += sizeof(local_addr);
     memcpy(scan_rsp_raw_start + place, scan_rsp_raw_mid, sizeof(scan_rsp_raw_mid)); place += sizeof(scan_rsp_raw_mid);
     memcpy(scan_rsp_raw_data + place, uri, sizeof(uri)); place += sizeof(uri);
-    if (am_ble_checkret(esp_ble_gap_config_scan_rsp_data_raw(scan_rsp_raw_data, sizeof(scan_rsp_raw_data)), "failed to configure scan rsp data")) return false;
+    if (am_checkret(tag, esp_ble_gap_config_scan_rsp_data_raw(scan_rsp_raw_data, sizeof(scan_rsp_raw_data)), "failed to configure scan rsp data")) return false;
 
-    if (am_ble_checkret(esp_ble_gap_register_callback(cb), "failed to register callback")) return false;
+    if (am_checkret(tag, esp_ble_gap_register_callback(cb), "failed to register callback")) return false;
 
     return true;
 }
