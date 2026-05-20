@@ -1,5 +1,18 @@
 #include "../bluetooth.hpp"
 
+#include "../../general.hpp"
+#include "../../storage.hpp"
+#include "esp_log.h"
+
+#include "esp_bt.h"
+#include "esp_gap_ble_api.h"
+#include "esp_gattc_api.h"
+#include "esp_gatt_defs.h"
+#include "esp_bt_main.h"
+#include "esp_bt_defs.h"
+#include "esp_system.h"
+#include "esp_bt_device.h"
+
 static uint8_t adv_start[] = { 0x02, ESP_BLE_AD_TYPE_FLAG, 0x06, 0x11, ESP_BLE_AD_TYPE_NAME_CMPL };
 static uint8_t adv_end[] = { 0x02, ESP_BLE_AD_TYPE_TX_PWR, 0x09, 0x03, ESP_BLE_AD_TYPE_APPEARANCE, 0x00,0x02,
     0x02, ESP_BLE_AD_TYPE_LE_ROLE, 0x00 };

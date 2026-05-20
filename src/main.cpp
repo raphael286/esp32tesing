@@ -6,18 +6,19 @@
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "esp_system.h"
+#include "ft6336.hpp"
+#include "driver/i2c.h"
 
 #include "driver/gpio.h"
 #include "lvgl.h"
 #include "TFT_eSPI.h"
-#include "amethyst/general.hpp"
-#include "amethyst/am_tft_espi.hpp"
-#include "amethyst/storage.hpp"
-#include "amethyst/bluetooth.hpp"
+#include "am/conn/physical.hpp"
 
-#define RPIN GPIO_NUM_34
-#define UPIN GPIO_NUM_35
-#define LPIN GPIO_NUM_16
+#define SDA -1
+#define SCL -1
+
+#define SCREEN_WIDTH = 320
+#define SCREEN_HEIGHT = 480
 
 static char name[] = "am_mc";
 static char url[] = "jewels86.me";
@@ -36,13 +37,12 @@ extern "C" void app_main(void) {
     tft.setTextSize(2);
     tft.setCursor(0, 0);
     tft.println("\n\nTFT_eSPI initialized.");
-    
-    if (!am_ble_init()) tft.fillScreen(TFT_RED);
-    tft.println("BLE initialized.");
-    tft.println("\nAdvertising under BLE name 'am_mc'...");
-    if (!am_ble_advertise(name, url, sizeof(name), sizeof(url))) tft.fillScreen(TFT_RED);
+    am_i2c_init(SDA, SCL);
+    tft.println("I2C initialized.");
 
-    am_long_wait(10000);
+    esp_idf::ft6336<480, 320> ts = esp_idf::ft6336<480, 320>(static_cast<i2c_port_t>(I2C_NUM_0));
+    if (!ts.initialize()) am_log("main", "ft6336_htcw failed to initialize");
+    tft.println("FT6336 series touch controller intialized.");
 }
 
 void tft_init() {

@@ -1,5 +1,18 @@
 #include "../bluetooth.hpp"
 
+#include "../../general.hpp"
+#include "../../storage.hpp"
+#include "esp_log.h"
+
+#include "esp_bt.h"
+#include "esp_gap_ble_api.h"
+#include "esp_gattc_api.h"
+#include "esp_gatt_defs.h"
+#include "esp_bt_main.h"
+#include "esp_bt_defs.h"
+#include "esp_system.h"
+#include "esp_bt_device.h"
+
 static const char* tag = "am_ble";
 
 bool am_ble_init() {

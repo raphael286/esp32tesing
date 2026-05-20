@@ -3,6 +3,12 @@
 
 #include "../wifi.hpp"
 
+#include "esp_wifi.h"
+#include "esp_mac.h"
+#include "esp_event.h"
+
+#include "../../general.hpp"
+
 #define am_softap_init(ssid, pass, channel, max_connection, evt_handler) do { \
     const char* tag = "am_softap"\
     if (am_checkret(tag, esp_netif_init(), "failed to initialize the TCP/IP stack")) return false\
