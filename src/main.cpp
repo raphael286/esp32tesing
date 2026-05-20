@@ -13,6 +13,7 @@
 #include "lvgl.h"
 #include "TFT_eSPI.h"
 #include "am/conn/physical.hpp"
+#include "am/management/touch.hpp"
 
 #define SDA -1
 #define SCL -1
@@ -23,8 +24,11 @@
 static char name[] = "am_mc";
 static char url[] = "jewels86.me";
 TFT_eSPI tft = TFT_eSPI();
+esp_idf::ft6336<480, 320> ts;
 
 void tft_init(void);
+void ts_read(int touch_index, uint16_t* out_x, uint16_t* out_y);
+void ts_count(int* out_count);
 
 extern "C" void app_main(void) {
     tft_init();
@@ -40,9 +44,16 @@ extern "C" void app_main(void) {
     am_i2c_init(SDA, SCL);
     tft.println("I2C initialized.");
 
-    esp_idf::ft6336<480, 320> ts = esp_idf::ft6336<480, 320>(static_cast<i2c_port_t>(I2C_NUM_0));
+    ts = esp_idf::ft6336<480, 320>(static_cast<i2c_port_t>(I2C_NUM_0));
     if (!ts.initialize()) am_log("main", "ft6336_htcw failed to initialize");
     tft.println("FT6336 series touch controller intialized.");
+    
+    am_touch_controller_i tsi = { ts_read, ts_count };
+
+    vec2_u16_t touch;
+    am_touch_wait_0(&tsi, &touch);
+    tft.drawCircle(touch.x, touch.y, 10, TFT_RED);
+    tft.println("How you like them apples?");
 }
 
 void tft_init() {
@@ -50,3 +61,9 @@ void tft_init() {
     tft.setRotation(3);
     tft.fillScreen(TFT_BLACK); 
 }
+
+void ts_read(int touch_index, uint16_t* out_x, uint16_t* out_y) {
+    ts.update();
+    ts.xy(out_x, out_y);
+}
+void ts_count(int* out_count) { ts.touches(); }
