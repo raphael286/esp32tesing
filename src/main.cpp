@@ -26,7 +26,7 @@ extern "C" void app_main(void) {
     tft.setTextDatum(TL_DATUM);
     tft.setTextSize(2);
     tft.setCursor(0, 0);
-    tft.println("\n\nTFT_eSPI initialized.");
+    tft.println("\n\nTFT_eSPI initialized. Last reset reason: " + String(esp_reset_reason()));
     
     am_ble_init();
     tft.println("BLE initialized.");
