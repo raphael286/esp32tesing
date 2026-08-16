@@ -28,8 +28,8 @@ extern "C" void app_main(void) {
     tft.setCursor(0, 0);
     tft.println("\n\nTFT_eSPI initialized. Last reset reason: " + String(esp_reset_reason()));
     
-    am_ble_init();
-    tft.println("BLE initialized.");
+    bool successfulBLE = am_ble_init();
+    tft.println("BLE initialized, status " + String(successfulBLE));
     am_ble_advertise("am_device", "", 9, 0);
     tft.println("BLE advertising started.");
 }

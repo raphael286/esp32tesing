@@ -62,29 +62,23 @@ bool am_ble_advertise(const char* name, const char* url, int name_size, int url_
 
 void cb(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param) {
         switch (event) {
-        case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
-            if (!config_done) break;
-            esp_ble_gap_start_advertising(&adv_params);
-            break;
-        case ESP_GAP_BLE_ADV_DATA_RAW_SET_COMPLETE_EVT:
-            if (!config_done) break;
-            esp_ble_gap_start_advertising(&adv_params);
-            break;
-        case ESP_GAP_BLE_SCAN_RSP_DATA_SET_COMPLETE_EVT:
-            if (!config_done) break;
-            esp_ble_gap_start_advertising(&adv_params);
-            break;
-        case ESP_GAP_BLE_SCAN_RSP_DATA_RAW_SET_COMPLETE_EVT:
-            if (!config_done) break;
-            esp_ble_gap_start_advertising(&adv_params);
-            break;
-        case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
-            if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
-                am_log("am_ble", "failed to start advertising");
-            }
-            am_log("am_ble", "Started advertising!");
-            break;
-        default:
-            break;
+            case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
+                if (!config_done) break;
+                esp_ble_gap_start_advertising(&adv_params);
+                break;
+            case ESP_GAP_BLE_ADV_DATA_RAW_SET_COMPLETE_EVT:
+                if (!config_done) break;
+                esp_ble_gap_start_advertising(&adv_params);
+                break;
+            case ESP_GAP_BLE_SCAN_RSP_DATA_SET_COMPLETE_EVT:
+                if (!config_done) break;
+                esp_ble_gap_start_advertising(&adv_params);
+                break;
+            case ESP_GAP_BLE_SCAN_RSP_DATA_RAW_SET_COMPLETE_EVT:
+                if (!config_done) break;
+                esp_ble_gap_start_advertising(&adv_params);
+                break;
+            default:
+                break;
         }
     };
